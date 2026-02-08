@@ -15,8 +15,9 @@ interface QuizAttemptItem {
 
 export default function ProfilePage() {
   const { user, token, loading } = useAuth();
+
   const [attempts, setAttempts] = useState<QuizAttemptItem[]>([]);
-  const [loadingAttempts, setLoadingAttempts] = useState(true);
+  const [loadingAttempts, setLoadingAttempts] = useState<boolean>(true);
 
   useEffect(() => {
     if (!token) {
@@ -25,12 +26,22 @@ export default function ProfilePage() {
     }
 
     fetch("/api/quiz/results", {
-      headers: { Authorization: Bearer  },
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     })
-      .then((r) => r.json())
-      .then((data) => setAttempts(data.attempts || []))
-      .catch(() => setAttempts([]))
-      .finally(() => setLoadingAttempts(false));
+      .then((res) => res.json())
+      .then((data) => {
+        setAttempts(data?.attempts ?? []);
+      })
+      .catch(() => {
+        setAttempts([]);
+      })
+      .finally(() => {
+        setLoadingAttempts(false);
+      });
   }, [token]);
 
   if (loading) {
@@ -48,20 +59,18 @@ export default function ProfilePage() {
     );
   }
 
-  const formatDate = (d: string) => {
-    try {
-      const dt = new Date(d);
-      return dt.toLocaleDateString(undefined, {
-        dateStyle: "medium",
-        timeStyle: "short",
-      });
-    } catch {
-      return d;
-    }
+  const formatDate = (date: string) => {
+    const d = new Date(date);
+    return isNaN(d.getTime())
+      ? date
+      : d.toLocaleString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+        });
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">My Profile</h1>
         <ShareButton title="My MedQuize Profile" url="/profile" />
@@ -76,7 +85,10 @@ export default function ProfilePage() {
       ) : (
         <ul className="space-y-2">
           {attempts.map((a) => (
-            <li key={a._id} className="border p-2 rounded">
+            <li
+              key={a._id}
+              className="border p-3 rounded-lg bg-white"
+            >
               <div className="font-medium">
                 {a.topic} — {a.score}/{a.total}
               </div>
