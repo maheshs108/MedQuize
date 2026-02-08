@@ -28,3 +28,4 @@
 
  ✓ Starting...
  ✓ Ready in 31s
+[?25h

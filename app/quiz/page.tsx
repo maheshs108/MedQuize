@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { ShareButton } from "@/components/ShareButton";
 
 type Difficulty = "easy" | "normal" | "hard" | "expert";
 type QuestionStyle = "mcq" | "written";
@@ -42,7 +43,8 @@ function getFeedbackMessage(score: number, total: number, previousAttempts: Quiz
   if (pct >= 90) return "Excellent! You've mastered this material. Keep revising to stay sharp.";
   if (pct >= 75) return "Well done! You're on the right track. Review the questions you missed to strengthen weak areas.";
   if (pct >= 60) return "Good effort. Focus on the explanations below for the questions you got wrong—you'll do even better next time.";
-  if (pct >= 40) return "Keep going! Use the "Learn" sections below to understand each topic, then try "Continue Quiz" for more practice.";
+  if (pct >= 40)
+    return "Keep going! Use the 'Learn' sections below to understand each topic, then try 'Continue Quiz' for more practice.";
   if (avgPrevious !== null && pct > avgPrevious) return "You're improving compared to your last attempts. Review the wrong answers and try again.";
   return "Don't give up! Study the explanations for each wrong answer—understanding beats memorization.";
 }
