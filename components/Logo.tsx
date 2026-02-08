@@ -1,0 +1,41 @@
+import Link from "next/link";
+
+/**
+ * Logo: medical (cross) + nursing (heart/care). Scales on all devices.
+ */
+export function Logo({ className = "" }: { className?: string }) {
+  return (
+    <Link href="/" className={"flex items-center gap-2 no-underline " + className}>
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="flex-shrink-0"
+        aria-hidden
+      >
+        <rect width="40" height="40" rx="10" fill="url(#logoGrad)" />
+        {/* Medical cross (vertical + horizontal bar) */}
+        <path
+          d="M18 8h4v24h-4V8zM10 18h20v4H10v-4z"
+          fill="white"
+          fillOpacity="0.95"
+        />
+        {/* Nursing / care: heart at center */}
+        <path
+          d="M20 15.2c-.8-.9-2-1.4-3.2-1.4-1.8 0-3.2 1.4-3.2 3.2 0 2.2 2.2 4 3.2 5 .3.3.7.5 1.2.5s.9-.2 1.2-.5c1-1 3.2-2.8 3.2-5 0-1.8-1.4-3.2-3.2-3.2-1.2 0-2.4.5-3.2 1.4z"
+          fill="white"
+          fillOpacity="0.9"
+        />
+        <defs>
+          <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#0d9488" />
+            <stop offset="1" stopColor="#0f766e" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <span className="font-bold text-xl text-slate-800 tracking-tight">MedQuize</span>
+    </Link>
+  );
+}
