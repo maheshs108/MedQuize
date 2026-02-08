@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { ShareButton } from "@/components/ShareButton";
@@ -8,34 +8,24 @@ import { ShareButton } from "@/components/ShareButton";
 interface QuizAttemptItem {
   _id: string;
   topic: string;
-  sourceType: string;
   score: number;
   total: number;
   completedAt: string;
-  questions?: {
-    question: string;
-    correct: boolean;
-    explanation?: string;
-    expectedAnswer?: string;
-    userWrittenAnswer?: string;
-  }[];
 }
 
 export default function ProfilePage() {
-  const { user, token, loading, setUser } = useAuth();
+  const { user, token, loading } = useAuth();
   const [attempts, setAttempts] = useState<QuizAttemptItem[]>([]);
   const [loadingAttempts, setLoadingAttempts] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!token) {
       setLoadingAttempts(false);
       return;
     }
+
     fetch("/api/quiz/results", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: Bearer  },
     })
       .then((r) => r.json())
       .then((data) => setAttempts(data.attempts || []))
@@ -50,8 +40,10 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <div className="p-4">
-        <h1 className="text-xl font-bold">My Profile</h1>
-        <Link href="/auth/signin">Sign in</Link>
+        <h1 className="text-xl font-bold mb-2">My Profile</h1>
+        <Link href="/auth/signin" className="text-blue-600 underline">
+          Sign in
+        </Link>
       </div>
     );
   }
@@ -70,19 +62,31 @@ export default function ProfilePage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">My Profile</h1>
-      <ShareButton title="My MedQuize Profile" url="/profile" />
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-bold">My Profile</h1>
+        <ShareButton title="My MedQuize Profile" url="/profile" />
+      </div>
 
-      <ul className="mt-4 space-y-2">
-        {attempts.map((a) => (
-          <li key={a._id} className="border p-2">
-            {a.topic} — {a.score}/{a.total}
-            <div className="text-sm text-gray-500">
-              {formatDate(a.completedAt)}
-            </div>
-          </li>
-        ))}
-      </ul>
+      <h2 className="font-semibold mb-2">Quiz Attempts</h2>
+
+      {loadingAttempts ? (
+        <p>Loading attempts...</p>
+      ) : attempts.length === 0 ? (
+        <p>No quiz attempts yet.</p>
+      ) : (
+        <ul className="space-y-2">
+          {attempts.map((a) => (
+            <li key={a._id} className="border p-2 rounded">
+              <div className="font-medium">
+                {a.topic} â€” {a.score}/{a.total}
+              </div>
+              <div className="text-sm text-gray-500">
+                {formatDate(a.completedAt)}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
